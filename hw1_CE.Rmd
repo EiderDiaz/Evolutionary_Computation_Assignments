@@ -1,0 +1,168 @@
+---
+title: "HW1_EC"
+output: html_document
+---
+
+################# Tournament selection
+
+```{r}
+tournament =  c ("0101110111","0111001001","0011001001","1110101100","1000010010","0000100010")
+set.seed(42)
+
+random_tournament = sample(tournament,6)
+f = vector()
+
+for (i in 1:length(random_tournament) ) {
+      f[i]=  table(strsplit(random_tournament[i],"")) [2] 
+}
+
+mating_pool=  vector()
+
+#slinding window of 3 elements
+
+for (i in 1:length(f) ) {
+  sliding_window =  seq(from=i,to=i+2,by=1)
+  overflow=  i+2 -  length(f)
+  if (overflow > 0) {
+      sliding_window = c(sliding_window[c(1:(3 - overflow))],1:overflow)
+  }
+  mating_pool[i] = max(f[sliding_window] )
+}
+
+
+```
+# • How many copies of each chromosome are present in the mating pool?
+
+```{r}
+table(mating_pool)
+
+```
+
+
+# • What is the average fitness of the chromosomes in the mating pool?
+```{r}
+mean(mating_pool)
+```
+
+# If the tournament size is reduced to one, what is the probability that the chromosome 1110101100
+appears in the mating pool?
+
+```{r}
+#if the ournament size is reduced to one means there is no comptetition so it will be 1/n and in this case 1/6 probability to appear in the mating pool
+
+```
+
+
+# • If the tournament size is increased to five, what is the probability that the chromosome 0111001001
+appears in the mating pool?
+
+
+```{r}
+tournament =  c ("0101110111","0111001001","0011001001","1110101100","1000010010","0000100010")
+set.seed(42)
+
+random_tournament = sample(tournament,6)
+f = vector()
+
+for (i in 1:length(random_tournament) ) {
+      f[i]=  table(strsplit(random_tournament[i],"")) [2] 
+}
+
+mating_pool=  vector()
+
+#slinding window of 3 elements
+
+for (i in 1:length(f) ) {
+  sliding_window =  seq(from=i,to=i+4,by=1)
+  overflow=  i+4 -  length(f)
+  if (overflow > 0) {
+      sliding_window = c(sliding_window[c(1:(5 - overflow))],1:overflow)
+  }
+  mating_pool[i] = max(f[sliding_window] )
+}
+
+mating_pool
+
+# 0 since it must the top 2 in oder to appear 
+```
+
+
+#################### Whole arithmetic crossover
+```{r deffinition of the chromosomes}
+x = c(0.23, 0.57, 0.29, 0.44, 0.44)
+
+y = c(0.63, 0.82, 0.62, 0.15, 0.51)
+
+
+
+```
+
+
+
+```{r 0.5}
+#ui= alpha* xi + (1-alpha)*yi
+alpha= 0.5
+u_0.5 = (alpha * x) + (1-alpha)*y
+v_0.5= (alpha* y) + (1-alpha)*x
+#results
+u_0.5
+v_0.5
+```
+
+
+
+```{r 0.1}
+alpha= 0.1
+u_0.1 = (alpha * x) + (1-alpha)*y
+v_0.1= (alpha* y) + (1-alpha)*x
+#results
+u_0.1
+v_0.1
+
+```
+################################### 3 Selection
+```{r}
+Population = c("AAOOEIIIOEA", "EEOUEO" ,"UUIOOAAIEEO","AAAEEEIIIOUUU","AUEIOUOOEEIIUIA")
+fitness = vector() 
+for (i in 1:length(Population)){
+  fitness[i] = sum(floor(table(strsplit(Population[i],""))/2))
+
+}
+
+```
+
+## • Calculate the probabilities of selecting each one of these individuals, based on a proportional selection
+(based on the fitness).
+
+
+```{r}
+prop_selection= print(fitness / sum(fitness))
+
+```
+
+
+## • Calculate the probabilities of selecting each one of these individuals, based on a linear ranking selection
+with C = 2.
+
+```{r}
+r = vector()
+c = 2
+n_1 = (length(Population)-1)
+
+for (i in 1:length(fitness) ){
+  
+  r[i] = which(sort(fitness) == fitness[i])[1] -1 
+
+}
+
+linear_ranking_fitness = print(r * (c/n_1)) 
+```
+
+## • Calculate the probabilities of selecting each one of these individuals, based on an exponential ranking
+selection with m = 3.
+
+```{r}
+m = 3
+
+exponential_ranking_fitness = print(m * (r/n_1) ^ (m-1)) 
+```
