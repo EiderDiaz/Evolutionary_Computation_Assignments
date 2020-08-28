@@ -1,6 +1,8 @@
 ---
 title: "HW1_EC"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 ################# Tournament selection
@@ -120,13 +122,17 @@ u_0.1
 v_0.1
 
 ```
+
+
 ################################### 3 Selection
 ```{r}
 Population = c("AAOOEIIIOEA", "EEOUEO" ,"UUIOOAAIEEO","AAAEEEIIIOUUU","AUEIOUOOEEIIUIA")
 fitness = vector() 
+fitness_k = vector() 
+
 for (i in 1:length(Population)){
   fitness[i] = sum(floor(table(strsplit(Population[i],""))/2))
-
+  fitness_k[i] =  fitness[i] * 5
 }
 
 ```
@@ -137,7 +143,15 @@ for (i in 1:length(Population)){
 
 ```{r}
 prop_selection= print(fitness / sum(fitness))
+prop_selection= print(fitness_k / sum(fitness_k))
 
+library(ggplot2)
+
+selection_df <- data.frame(population = Population,prop_selection=prop_selection)
+ggplot(selection_df, aes(x=population, y=prop_selection)) +
+  geom_bar(stat="identity", fill="steelblue")+
+  geom_text(aes(label=round(prop_selection,5)), vjust=1.6, color="black", size=3.5)+
+  theme_minimal()
 ```
 
 
@@ -146,16 +160,30 @@ with C = 2.
 
 ```{r}
 r = vector()
+r_k = vector()
+
 c = 2
 n_1 = (length(Population)-1)
 
 for (i in 1:length(fitness) ){
-  
   r[i] = which(sort(fitness) == fitness[i])[1] -1 
-
+  r_k[i] = which(sort(fitness_k) == fitness_k[i])[1] -1 
 }
 
 linear_ranking_fitness = print(r * (c/n_1)) 
+linear_ranking_fitness_k = print(r_k * (c/n_1)) 
+
+selection_df <-cbind(selection_df, linear_ranking_fitness) 
+
+ggplot(selection_df, aes(x=population, y=linear_ranking_fitness)) +
+  geom_bar(stat="identity", fill="steelblue")+
+  geom_text(aes(label=round(linear_ranking_fitness,5)), vjust=1.6, color="black", size=3.5)+
+  theme_minimal()
+
+ggplot(selection_df, aes(x=population, y=linear_ranking_fitness_k)) +
+  geom_bar(stat="identity", fill="steelblue")+
+  geom_text(aes(label=round(linear_ranking_fitness_k,5)), vjust=1.6, color="black", size=3.5)+
+  theme_minimal()
 ```
 
 ## • Calculate the probabilities of selecting each one of these individuals, based on an exponential ranking
@@ -165,4 +193,38 @@ selection with m = 3.
 m = 3
 
 exponential_ranking_fitness = print(m * (r/n_1) ^ (m-1)) 
+
+exponential_ranking_fitness_k = print(m * (r_k/n_1) ^ (m-1)) 
+
+ggplot(selection_df, aes(x=population, y=exponential_ranking_fitness)) +
+  geom_bar(stat="identity", fill="steelblue")+
+  geom_text(aes(label=round(exponential_ranking_fitness,5)), vjust=1.6, color="black", size=3.5)+
+  theme_minimal()
+
+ggplot(selection_df, aes(x=population, y=exponential_ranking_fitness_k)) +
+  geom_bar(stat="identity", fill="steelblue")+
+  geom_text(aes(label=round(exponential_ranking_fitness_k,5)), vjust=1.6, color="black", size=3.5)+
+  theme_minimal()
+```
+
+
+
+```{r 1}
+#ui= alpha* xi + (1-alpha)*yi
+alpha= 1.0
+u_1 = (alpha * x) + (1-alpha)*y
+v_1= (alpha* y) + (1-alpha)*x
+#results
+u_1
+v_1
+```
+
+```{r 0}
+#ui= alpha* xi + (1-alpha)*yi
+alpha= 0
+u_0 = (alpha * x) + (1-alpha)*y
+v_0= (alpha* y) + (1-alpha)*x
+#results
+u_0
+v_0
 ```
